@@ -1121,9 +1121,16 @@
           }
           
                       // Vérifiez si la touche + a été appuyée
-          if (e.key === '+') {
+          if (e.key === '*') {
               // Jouez un son spécifique
               var audio = new Audio('hep.mp3');
+              audio.play();
+          }
+
+                      // Vérifiez si la touche + a été appuyée
+          if (e.key === '+') {
+              // Jouez un son spécifique
+              var audio = new Audio('step.mp3');
               audio.play();
           }
                     
