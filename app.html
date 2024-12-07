@@ -1,5 +1,186 @@
 <!DOCTYPE html>
 <html>
+<body>
+    <script>
+// Variables de contrôle
+var sonsActifs = [];
+var mute = false;
+var randomSoundInterval;
+
+// Liste des sons associés aux lettres
+const soundMap = {
+    'a': 'https://www.myinstants.com/media/sounds/boo-tu-as-peur-nai-pas-peur.mp3',
+    'z': 'https://www.myinstants.com/media/sounds/zemmour-tousse.mp3',
+    'e': 'https://www.myinstants.com/media/sounds/sigma-boy-sigma-boi-oma-griet.mp3',
+    'r': 'https://www.myinstants.com/media/sounds/tk78.mp3',
+    't': 'https://www.myinstants.com/media/sounds/tenge-tenge.mp3',
+    'y': 'https://www.myinstants.com/media/sounds/le-cailloux.mp3',
+    'u': 'https://www.myinstants.com/media/sounds/youtube-uwuuuuu.mp3',
+    'i': 'https://www.myinstants.com/media/sounds/y2mate_DO1kVeR.mp3',
+    'o': 'https://www.myinstants.com/media/sounds/aughhhhh-aughhhhh.mp3',
+    'p': 'https://www.myinstants.com/media/sounds/pew_pew-dknight556-1379997159.mp3',
+    'q': 'https://www.myinstants.com/media/sounds/ad-laurent.mp3',
+    's': 'https://www.myinstants.com/media/sounds/nya_2xyALFL.mp3',
+    'd': 'https://www.myinstants.com/media/sounds/tmp_7901-951678082.mp3',
+    'f': 'https://www.myinstants.com/media/sounds/son-rempli-de-malice-farfadet.mp3',
+    'g': 'pop.mp3',
+    'h': 'https://www.myinstants.com/media/sounds/hugooo.mp3',
+    'j': 'https://www.myinstants.com/media/sounds/huh-cat.mp3',
+    'k': 'https://www.myinstants.com/media/sounds/kayako-beme.mp3',
+    'l': 'https://www.myinstants.com/media/sounds/comment-tu-parles.mp3',
+    'm': 'https://www.myinstants.com/media/sounds/mange-ta-tante-grandingo.mp3',
+    'w': 'https://www.myinstants.com/media/sounds/whatsapp-bass-boosted.mp3',
+    'x': 'https://www.myinstants.com/media/sounds/grandingo-tu-prefere-moi-ou-ton-pere.mp3',
+    'c': 'https://www.myinstants.com/media/sounds/clash-royale-hog-rider.mp3',
+    'v': 'https://www.myinstants.com/media/sounds/vine-boom.mp3',
+    'b': 'https://www.myinstants.com/media/sounds/ferme-ta-gueule-bassem.mp3',
+    'n': 'https://www.myinstants.com/media/sounds/ouh-grandingo.mp3',
+    '0': 'https://www.myinstants.com/media/sounds/toyota-meme.mp3',
+    '1': 'https://www.myinstants.com/media/sounds/couin.mp3',
+    '2': 'https://www.myinstants.com/media/sounds/burp_PHtdhVI.mp3',
+    '3': 'https://www.myinstants.com/media/sounds/fanta-ta-geule.mp3',
+    '4': 'https://www.myinstants.com/media/sounds/he-he-he-ha-clash-royale-deep-fried.mp3',
+    '5': 'https://www.myinstants.com/media/sounds/faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaart.mp3',
+    '6': 'https://www.myinstants.com/media/sounds/moussa-batiment.mp3',
+    '7': 'https://www.myinstants.com/media/sounds/il-est-7h-du-matin.mp3',
+    '8': 'https://www.myinstants.com/media/sounds/bruit-de-cochon.mp3',
+    '9': 'https://www.myinstants.com/media/sounds/byilhan-beau-frere.mp3',
+    ',': 'https://www.myinstants.com/media/sounds/goofy-ahh-car-horn-sound-effect.mp3',
+    ';': 'https://www.myinstants.com/media/sounds/deg-deg_4M6Cojn.mp3',
+    ':': 'https://www.myinstants.com/media/sounds/nul-nul-nul-sound-effect.mp3',
+    '*': 'hep.mp3',
+    '+': 'step.mp3',
+    '-': 'https://www.myinstants.com/media/sounds/10000-khz.mp3',
+    'A': 'Ma-main-se-crispe-hep.mp3',
+    'Z': 'MMSCrispy.mp3',
+    'E': 'banane.mp3',
+    'R': 'starfalalalalalala.mp3',
+    'T': 'Tu-te tait-ou-hep.mp3',
+    'Y': 'jai pas die sa hep hep.mp3',
+    'U': 'URL',
+    'I': 'pas.mp3',
+    'O': 'Tu-te-tait-ou.mp3',
+    'P': 'poil-dans-la-main.mp3',
+    'Q': 'Quotaparole.mp3',
+    'S': 'Style-hep-barbie.mp3',
+    'D': 'Dash.mp3',
+    'F': 'gueule.mp3',
+    'G': 'gconhep.mp3',
+    'H': 'Hihi-carnet-page-8.mp3',
+    'J': 'Jappelle-le-père-hep.mp3',
+    'K': 'Klaxon-américain-truck.mp3',
+    'L': 'https://www.myinstants.com/media/sounds/linganguliguli-don-pollo.mp3',
+    'W': 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3',
+    'X': 'https://www.myinstants.com/media/sounds/yippeeeeeeeeeeeeee.mp3',
+    'C': 'Carnet-page-8-hep.mp3',
+    'V': 'https://www.myinstants.com/media/sounds/un-ptit-wrap.mp3',
+    'B': 'Son-style-hep.mp3',
+    'N': 'https://www.myinstants.com/media/sounds/allez-le-nwar.mp3'
+};
+
+// Fonction pour jouer un son
+function playSound(url, isLetterSound = false) {
+    if (mute) return; // Si mute est activé, ne pas jouer le son
+
+    const audio = new Audio(url);
+    audio.play();
+    sonsActifs.push(audio);
+
+    // Si c'est un son aléatoire (et non un son de lettre), il dure 5 secondes
+    if (!isLetterSound) {
+        setTimeout(function () {
+            audio.pause();
+            audio.currentTime = 0; // Remet le son à zéro pour la prochaine lecture
+        }, 5000);
+    }
+}
+
+// Fonction pour jouer un son d'indication
+function playMuteToggleSound() {
+    var sonActivation = new Audio('https://www.myinstants.com/media/sounds/couin.mp3'); // Son de notification
+    sonActivation.muted = mute; // Respecte l'état mute
+    sonActivation.play();
+
+    setTimeout(function () {
+        sonActivation.pause();
+        sonActivation.currentTime = 0;
+    }, 5000);
+}
+
+// Fonction pour jouer un son aléatoire
+function playRandomSound() {
+    var randomKey = Object.keys(soundMap)[Math.floor(Math.random() * Object.keys(soundMap).length)];
+    var randomSound = soundMap[randomKey];
+
+    playSound(randomSound, false); // false car ce n'est pas un son de lettre
+}
+
+// Fonction pour démarrer les sons aléatoires en continu
+function startRandomSounds() {
+    // Fonction récursive pour jouer un son après un délai aléatoire
+    function playNextRandomSound() {
+        if (mute) return; // Si mute est activé, ne pas jouer de son
+
+        // Délai entre 30 et 50 secondes (espacement des sons)
+        var randomDelay = Math.random() * 20000 + 30000;
+
+        // Jouer le son aléatoire après un délai aléatoire
+        setTimeout(function () {
+            playRandomSound();
+            playNextRandomSound(); // Relancer la fonction pour le son suivant
+        }, randomDelay);
+    }
+
+    // Lancer la première instance de la fonction
+    playNextRandomSound();
+}
+
+// Activer ou désactiver les sons aléatoires
+function toggleRandomSounds() {
+    playMuteToggleSound();
+    startRandomSounds(); // Démarrer les sons aléatoires en continu
+}
+
+// Fonction pour activer ou désactiver le mute
+function toggleMute() {
+    mute = !mute; // Changer l'état du mute
+    sonsActifs.forEach(function (son) {
+        son.muted = mute; // Appliquer le mute sur les sons actifs
+    });
+    console.log(mute ? "Sons coupés." : "Sons réactivés.");
+}
+
+// Gestion des événements clavier
+document.addEventListener('keydown', function (e) {
+    // Touche Maj pour activer/désactiver les sons aléatoires
+    if (e.key === 'Shift') {
+        toggleRandomSounds();
+    }
+
+    // Touche Espace pour activer/désactiver le mute
+    if (e.key === ' ') {
+        toggleMute();
+    }
+
+    // Si une lettre est appuyée, vérifier la casse et jouer le son correspondant
+    if (e.key.length === 1) { // Vérifie si c'est une touche de caractère (pas une touche de contrôle)
+        const isUpperCase = e.key === e.key.toUpperCase(); // Vérifie si la touche est en majuscule
+
+        // Si c'est une lettre minuscule
+        if (!isUpperCase && soundMap[e.key]) {
+            playSound(soundMap[e.key], true); // true car c'est un son de lettre
+        }
+
+        // Si c'est une lettre majuscule
+        if (isUpperCase && soundMap[e.key]) {
+            playSound(soundMap[e.key], true); // true car c'est un son de lettre
+        }
+    }
+});
+    </script>
+
+<!DOCTYPE html>
+<html>
 <head>
 
 
@@ -803,536 +984,5 @@
     <nav class="navbar navbar-light AAEcdpWAqOPFAoXUxvaH"><div class="ms-3"></div></nav>
     <div class="row justify-content-center bg-white"><div class="col-md-4"><div class="row"><div><span class="ms-1 ojag4CKqsnfD5x0NA9NQ">Adobe&nbsp;Acrobat&nbsp;Reader</span></div></div><div class="row"><div class="d-none d-md-block mt-2 mb-2"><h1 class="fw-bold LaxgIXSKYfqITDVQVJkx">La visionneuse PDF gratuite la plus fiable au monde</h1></div><div class="d-none d-sm-block d-md-none mt-2 mb-2"><h1 class="fw-bold BI8wyWjQZhy7qdkTm0EX">La visionneuse PDF gratuite la plus fiable au monde</h1></div><div class="d-block d-sm-none mt-3 mb-3"><h1 class="fw-bold BI8wyWjQZhy7qdkTm0EX">La visionneuse PDF gratuite la plus fiable au monde</h1></div><div><span class="AzbucaY8xnkGRMGFTIZw mt-2">Windows 10 - 11 • French • Version 23.008.20470 &nbsp;<a href="#" class="Aclr1Xttu_1lxR_vXbDg"> Configuration requise</a> <br>  Téléchargez Acrobat Reader pour travailler avec des documents PDF dans Acrobat sur poste de travail et dans le navigateur Google Chrome.  <br> En cliquant sur le bouton "Télécharger Acrobat&nbsp;Reader", vous reconnaissez avoir lu et accepté l’intégralité de<a href="" class="Aclr1Xttu_1lxR_vXbDg"></a>&nbsp;<a class="PrSpIPCP3Ktf9gjAQctt" href="#">Conditions générales.</a>&nbsp;</span></div><div class="mt-3 mb-3"> <button type="button" class="btn btn-primary">Télécharger Acrobat Reader</button></div></div></div><div class="d-none d-md-block col-md-6 mt-n2 rxSP_LPQMjJwIpQNYva6"></div></div><div class="row justify-content-center bg-white"><p class="text-center fs-4 fw-bold pt-3">Inclus avec votre téléchargement</p><div class="col-sm-12 col-lg-3"><fieldset class="border p-3 h-100 rounded-1"><legend class="float-none w-auto px-2 fw-bold KNih5tU1OHAGEIRb2aNA">Plus de modules complémentaires</legend><div class="d-flex flex-row "><div class="CUkg87EkNYMRtdghTlW1"><input class="form-check-input" type="checkbox" id="mss"><div class="ms-4 mt-n3"><label class="form-check-label Uwd7pwbu9ZT4Tfru0pF2" for="addonCheckbox">Installer McAfee Security Scan Plus</label><p class="pt-2 lh-1 text-muted mb-0"><small class="fw-light"> Installez l’utilitaire gratuit pour vérifier l’état de la sécurité de mon PC. Il ne modifiera pas le programme antivirus ou les paramètres du PC existants. </small> </p><a href="#" class="text-muted"><small class="fw-light">En savoir plus</small></a></div></div></div></fieldset></div><div class="text-center mt-4 mb-3"><button type="button" class="btn btn-primary">Télécharger Acrobat Reader</button></div><div class="text-center mb-5"><a class="Ea4DrrfJE37BaGEGefEi" href="#"><small class="fw-light">Plus d’options de téléchargement</small></a></div></div><div class="row justify-content-center ATy_JAPHRvjPah6UmZsP pb-4"><div class="col-sm-12 mt-5 mb-5"><h2 class="DRikMFdshrIebs_r0UCO text-center">Simplifiez vos formalités administratives — gratuitement</h2></div><div class="col-md-12"><div class="row justify-content-center text-center"><div class="col-8 col-sm-5 col-md-2"><h2 class="aPqy2iiJ95TSAz6XWKTm mt-2">Afficher, stocker et partager des PDF</h2><p class="hYnpNUuUWyOrYNK6PhkS mt-1 mb-4 mb-sm-0">Profitez d’une expérience de visionnage optimale pour tous les types de contenu PDF. Stockez des fichiers en ligne et partagez-les avec n’importe qui.</p></div><div class="d-none d-sm-block vr px-0 mx-4"></div><div class="col-8 col-sm-5 col-md-2"><h2 class="aPqy2iiJ95TSAz6XWKTm mt-2">Remplir et signer</h2><p class="hYnpNUuUWyOrYNK6PhkS mt-1 mb-4 mb-sm-0">Remplissez rapidement des formulaires et ajoutez votre signature ou vos initiales. Partagez ensuite un lien avec d’autres personnes.</p></div><div class="d-none d-md-block vr px-0 mx-4"></div><div class="mb-4 d-none d-sm-block d-md-none"></div><div class="col-8 col-sm-5 col-md-2"><h2 class="aPqy2iiJ95TSAz6XWKTm mt-2">Envoyer et recevoir des commentaires</h2><p class="hYnpNUuUWyOrYNK6PhkS mt-1 mb-4 mb-sm-0">Ajoutez des zones de texte, des notes et du texte en surbrillance. Partagez un PDF pour recueillir les données de chacun dans un seul fichier.</p></div><div class="d-none d-sm-block vr px-0 mx-4"></div><div class="col-8 col-sm-5 col-md-2"><h2 class="aPqy2iiJ95TSAz6XWKTm mt-2">Travaillez où que vous soyez</h2><p class="hYnpNUuUWyOrYNK6PhkS mt-1 mb-4 mb-sm-0">Accédez à vos fichiers depuis n’importe quel appareil grâce à l’application gratuite Acrobat Reader et par le biais de l’extension Acrobat Reader pour Chrome</p></div></div></div><div class="col-sm-12 text-center mt-3 mt-sm-5 mb-3"><button type="button" class="btn btn-primary">Télécharger Acrobat Reader</button></div></div><div class="row justify-content-center text-center dnQBdOBZq05wKlXLGNRl"><div class="col-sm-8 c4gbU5qyv4vPQkFNL9o5"><h2 class="mb-4 gmQOsnUdq8XiuWj73YmW">Donnez à votre entreprise la puissance de la productivité PDF</h2><p class="mb-0 mt-1 qxCmF9B950koc1ZZVuBW">Permettez à tous vos employés de consulter, signer, commenter et partager gratuitement des PDF.<br>Acrobat&nbsp;Reader peut être distribué au-delà de la simple installation monoposte et <br>peut être rapidement déployé dans votre entreprise avec une licence en volume.</p><div class="mt-3 mb-3"><a role="button" tabindex="0" href="https://www.adobe.com/fr/products/reader/rdr_distribution1.html" target="_blank" class="border-dark mt-3 G_CFkTquStpNx7agnwQE btn btn-secondary">En savoir plus<br></a><a role="button" tabindex="0" href="https://www.adobe.com/go/rdr_apply_dist/" target="_blank" class="mt-3 UDiwFMaLnCLFzZpYuQBS btn btn-primary">Demander une licence</a></div></div></div></div><footer class=" ZUI5rC2xb_dnM7L7ni0a row g-0 pb-3 pt-3 ps-3 text-center"><div class="col-sm-12 col-md-2 text-start text-md-start"><div class="lIuMO7Mf0BlhfAXkbKXM"><span><img src="/reader/55b1c0d0/images/globe.svg" alt="Adobe Acrobat Reader" class="me-1"><span class="ejOJ8d2hoV43bTYK9d59">Changer de région<div class="ms-2 hwTsq_5FeqqryiwD4LKv"></div></span></span></div></div><div class="col-sm-12 col-md-10 text-start text-md-end"><span class="me-1 NCJVd_6ucXVS7aC8bfbA lIuMO7Mf0BlhfAXkbKXM">Copyright ©  SoundPage.<span class="ms-1 me-2">All rights reserved.</span></span>/<a class="me-2 ms-2 text-black text-decoration-none lIuMO7Mf0BlhfAXkbKXM" href="#" rel="noreferrer"> Fake Adobe download page</a>/<a class="me-2 ms-3 text-black text-decoration-none lIuMO7Mf0BlhfAXkbKXM" target="_blank" href="//thunderos.glitch.me" rel="noreferrer">ThunderOs</a> /<span class="me-1 text-black NCJVd_6ucXVS7aC8bfbA lIuMO7Mf0BlhfAXkbKXM"><a class="ms-1 me-2 lH6wH1PYCkiOMhL1zbmc text-black text-decoration-none" href="https://www.adobe.com/go/ca-rights" target="_blank"> Ne pas vendre ni partager mes données personnelles</a></span></div></footer></div>
 </div><div class="no-script" style="display: none;text-align:center;" id="appie"><div>This website no longer works on Internet Explorer due to end of support.</div><div style="font-style: italic;">Please use Microsoft Edge or another supported browser.</div></div><script>if("Internet Explorer"===function(e){switch(!0){case e.indexOf("edge")>-1:return"MS Edge (EdgeHtml)";case e.indexOf("edg")>-1:return"MS Edge Chromium";case e.indexOf("opr")>-1&&!!window.opr:return"opera";case e.indexOf("chrome")>-1&&!!window.chrome:return"chrome";case e.indexOf("trident")>-1:return"Internet Explorer";case e.indexOf("firefox")>-1:return"firefox";case e.indexOf("safari")>-1:return"safari";default:return"other"}}(window.navigator.userAgent.toLowerCase()))document.getElementById("appie").style.removeProperty("display")</script><noscript><h1 class="no-script" style="text-align:center">JavaScript is currently disabled in your browser and is required to download Adobe Acrobat Reader.</h1></noscript><iframe name="Adobe Alloy" style="display: none; width: 0px; height: 0px;"></iframe></body></html>
-
-
-<body>
-    <script>
-        // Créez un tableau avec les URL de vos sons
-        var sons = [
-            'https://www.myinstants.com/media/sounds/inoxtagtu-manques-a-la-terre-entiere.mp3',
-            'https://www.myinstants.com/media/sounds/coton-noar.mp3',
-            'https://www.myinstants.com/media/sounds/ouais-gerard-depardieu.mp3',
-            'https://www.myinstants.com/media/sounds/zigou-en-vent.mp3',
-            'https://www.myinstants.com/media/sounds/allez-le-nwoar.mp3',
-                    // OUIOUI
-            'https://www.myinstants.com/media/sounds/y2mate_DO1kVeR.mp3',
-            'https://www.myinstants.com/media/sounds/ouvre-la-porte.mp3',
-            'https://www.myinstants.com/media/sounds/chinese-rap-song.mp3',
-                                // peppa pig haram
-            'https://www.myinstants.com/media/sounds/img_0181-online-audio-converter.mp3',
-            'https://www.myinstants.com/media/sounds/whatsapp-bass-boosted.mp3',
-            'https://www.myinstants.com/media/sounds/bye-bye-mewing_vUvlJKN.mp3',
-            'https://www.myinstants.com/media/sounds/bon-debarabee.mp3',
-            'https://www.myinstants.com/media/sounds/freddy-fazbear-rizz.mp3',
-            'https://www.myinstants.com/media/sounds/fortnite-default-dance-bass-boosted.mp3',
-            'https://www.myinstants.com/media/sounds/ha-si-tu-pouvais-fermer-ta-gueule.mp3',
-            'https://www.myinstants.com/media/sounds/we-live-we-love-we-lie.mp3',
-            'https://www.myinstants.com/media/sounds/galaxy-meme.mp3',
-            'https://www.myinstants.com/media/sounds/freddy-fazbear-phonk.mp3',
-            'https://www.myinstants.com/media/sounds/intro-tk78.mp3',
-            'https://www.myinstants.com/media/sounds/sigma.mp3',
-            'https://www.myinstants.com/media/sounds/arracheryeux.mp3',
-            'https://www.myinstants.com/media/sounds/outro-song_oqu8zAg.mp3',
-            'https://www.myinstants.com/media/sounds/triple-monstre.mp3',
-            'https://www.myinstants.com/media/sounds/toothless-dancing_rT0J7Pn.mp3',
-            // Ajoutez plus de sons si nécessaire
-        ];
-
-        // Créez une fonction pour jouer un son aléatoire
-        function jouerSonAleatoire() {
-            var sonAleatoire = sons[Math.floor(Math.random() * sons.length)];
-            var audio = new Audio(sonAleatoire);
-            audio.play();
-        }
-
-        // Créez une fonction pour gérer l'événement de frappe de touches
-        document.onkeydown = function(e) {
-            // Vérifiez si la touche Maj a été appuyée
-            if (e.key === 'Shift') {
-                jouerSonAleatoire();
-            }
-
-            // Vérifiez si la touche Espace a été appuyée
-            if (e.key === ' ') {
-                // Jouez un son spécifique
-                var audio = new Audio('https://www.myinstants.com/media/sounds/sigma-boy-sigma-boi-oma-griet.mp3');
-                audio.play();
-            }
-
-                        // Vérifiez si la touche a a été appuyée
-            if (e.key === 'a') {
-                // Jouez un son spécifique
-                var audio = new Audio('https://www.myinstants.com/media/sounds/boo-tu-as-peur-nai-pas-peur.mp3');
-                audio.play();
-            }
-
-                      // Vérifiez si la touche z a été appuyée
-          if (e.key === 'z') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/zemmour-tousse.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche e a été appuyée
-          if (e.key === 'e') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/sigma-boy-sigma-boi-oma-griet.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche r a été appuyée
-          if (e.key === 'r') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/tk78.mp3');
-              audio.play();
-          }
-
-                        // Vérifiez si la touche t a été appuyée
-            if (e.key === 't') {
-                // Jouez un son spécifique
-                var audio = new Audio('https://www.myinstants.com/media/sounds/tenge-tenge.mp3');
-                audio.play();
-            }
-
-                      // Vérifiez si la touche y a été appuyée
-          if (e.key === 'y') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/le-cailloux.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche u a été appuyée
-          if (e.key === 'u') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/youtube-uwuuuuu.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche i a été appuyée
-          if (e.key === 'i') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/y2mate_DO1kVeR.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche o a été appuyée
-          if (e.key === 'o') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/aughhhhh-aughhhhh.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche p a été appuyée
-          if (e.key === 'p') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/pew_pew-dknight556-1379997159.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche q a été appuyée
-          if (e.key === 'q') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/ad-laurent.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche s a été appuyée
-          if (e.key === 's') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/nya_2xyALFL.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche d a été appuyée
-          if (e.key === 'd') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/tmp_7901-951678082.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche f a été appuyée
-          if (e.key === 'f') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/son-rempli-de-malice-farfadet.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche g a été appuyée
-          if (e.key === 'g') {
-              // Jouez un son spécifique
-              var audio = new Audio('pop.mp3');
-              audio.play();
-          }
-
-                        // Vérifiez si la touche h a été appuyée
-            if (e.key === 'h') {
-                // Jouez un son spécifique
-                var audio = new Audio('https://www.myinstants.com/media/sounds/hugooo.mp3');
-                audio.play();
-            }
-
-                                  // Vérifiez si la touche j a été appuyée
-          if (e.key === 'j') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/huh-cat.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche k a été appuyée
-          if (e.key === 'k') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/kayako-beme.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche l a été appuyée
-          if (e.key === 'l') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/comment-tu-parles.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche m a été appuyée
-          if (e.key === 'M') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/mange-ta-tante-grandingo.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche w a été appuyée
-          if (e.key === 'w') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/whatsapp-bass-boosted.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche x a été appuyée
-          if (e.key === 'x') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/grandingo-tu-prefere-moi-ou-ton-pere.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche c a été appuyée
-          if (e.key === 'c') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/clash-royale-hog-rider.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche v a été appuyée
-          if (e.key === 'v') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3');
-              audio.play();
-          }
-
-                                  // Vérifiez si la touche b a été appuyée
-          if (e.key === 'b') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/ferme-ta-gueule-bassem.mp3');
-              audio.play();
-          }
-
-                        // Vérifiez si la touche n a été appuyée
-            if (e.key === 'n') {
-                // Jouez un son spécifique
-                var audio = new Audio('https://www.myinstants.com/media/sounds/ouh-grandingo.mp3');
-                audio.play();
-            }
-
-                      // Vérifiez si la touche 0 a été appuyée
-          if (e.key === '0') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/toyota-meme.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 1 a été appuyée
-          if (e.key === '1') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/couin.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 2 a été appuyée
-          if (e.key === '2') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/burp_PHtdhVI.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 3 a été appuyée
-          if (e.key === '3') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/fanta-ta-geule.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 4 a été appuyée
-          if (e.key === '4') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/he-he-he-ha-clash-royale-deep-fried.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 5 a été appuyée
-          if (e.key === '5') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaart.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 6 a été appuyée
-          if (e.key === '6') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/moussa-batiment.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 7 a été appuyée
-          if (e.key === '7') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/il-est-7h-du-matin.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 8 a été appuyée
-          if (e.key === '8') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/bruit-de-cochon.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche 9 a été appuyée
-          if (e.key === '9') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/byilhan-beau-frere.mp3');
-              audio.play();
-          }
-          
-                      // Vérifiez si la touche , a été appuyée
-          if (e.key === ',') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/goofy-ahh-car-horn-sound-effect.mp3');
-              audio.play();
-          }
-                    
-                                          // Vérifiez si la touche ; a été appuyée
-          if (e.key === ';') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/deg-deg_4M6Cojn.mp3');
-              audio.play();
-          }
-                                // Vérifiez si la touche : a été appuyée
-          if (e.key === ':') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/nul-nul-nul-sound-effect.mp3');
-              audio.play();
-          }
-                    
-                      // Vérifiez si la touche + a été appuyée
-          if (e.key === '*') {
-              // Jouez un son spécifique
-              var audio = new Audio('hep.mp3');
-              audio.play();
-          }
-
-                      // Vérifiez si la touche + a été appuyée
-          if (e.key === '+') {
-              // Jouez un son spécifique
-              var audio = new Audio('step.mp3');
-              audio.play();
-          }
-                    
-                      // Vérifiez si la touche - a été appuyée
-          if (e.key === '-') {
-              // Jouez un son spécifique
-              var audio = new Audio('https://www.myinstants.com/media/sounds/10000-khz.mp3');
-              audio.play();
-          }
-    
-           // Lettre Maj debut
-          // Vérifiez si la touche A a été appuyée
-if (e.key === 'A') {
-    // Jouez un son spécifique
-    var audio = new Audio('Ma-main-se-crispe-hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche Z a été appuyée
-if (e.key === 'Z') {
-    // Jouez un son spécifique
-    var audio = new Audio('MMSCrispy.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche E a été appuyée
-if (e.key === 'E') {
-    // Jouez un son spécifique
-    var audio = new Audio('banane.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche R a été appuyée
-if (e.key === 'R') {
-    // Jouez un son spécifique
-    var audio = new Audio('starfalalalalalala.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche T a été appuyée
-if (e.key === 'T') {
-    // Jouez un son spécifique
-    var audio = new Audio('Tu-te tait-ou-hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche Y a été appuyée
-if (e.key === 'Y') {
-    // Jouez un son spécifique
-    var audio = new Audio('jai pas die sa hep hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche U a été appuyée
-if (e.key === 'U') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-
-// Vérifiez si la touche I a été appuyée
-if (e.key === 'I') {
-    // Jouez un son spécifique
-    var audio = new Audio('pas.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche O a été appuyée
-if (e.key === 'O') {
-    // Jouez un son spécifique
-    var audio = new Audio('Tu-te-tait-ou.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche P a été appuyée
-if (e.key === 'P') {
-    // Jouez un son spécifique
-    var audio = new Audio('poil-dans-la-main.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche Q a été appuyée
-if (e.key === 'Q') {
-    // Jouez un son spécifique
-    var audio = new Audio('Quotaparole.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche S a été appuyée
-if (e.key === 'S') {
-    // Jouez un son spécifique
-    var audio = new Audio('Style-hep-barbie.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche D a été appuyée
-if (e.key === 'D') {
-    // Jouez un son spécifique
-    var audio = new Audio('Dash.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche F a été appuyée
-if (e.key === 'F') {
-    // Jouez un son spécifique
-    var audio = new Audio('gueule.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche G a été appuyée
-if (e.key === 'G') {
-    // Jouez un son spécifique
-    var audio = new Audio('gconhep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche H a été appuyée
-if (e.key === 'H') {
-    // Jouez un son spécifique
-    var audio = new Audio('Hihi-carnet-page-8.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche J a été appuyée
-if (e.key === 'J') {
-    // Jouez un son spécifique
-    var audio = new Audio('Jappelle-le-père-hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche K a été appuyée
-if (e.key === 'K') {
-    // Jouez un son spécifique
-    var audio = new Audio('Klaxon-américain-truck.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche L a été appuyée
-if (e.key === 'L') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-
-// Vérifiez si la touche W a été appuyée
-if (e.key === 'W') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-
-// Vérifiez si la touche X a été appuyée
-if (e.key === 'X') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-
-// Vérifiez si la touche C a été appuyée
-if (e.key === 'C') {
-    // Jouez un son spécifique
-    var audio = new Audio('Carnet-page-8-hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche V a été appuyée
-if (e.key === 'V') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-
-// Vérifiez si la touche B a été appuyée
-if (e.key === 'B') {
-    // Jouez un son spécifique
-    var audio = new Audio('Son-style-hep.mp3');
-    audio.play();
-}
-
-// Vérifiez si la touche N a été appuyée
-if (e.key === 'N') {
-    // Jouez un son spécifique
-    var audio = new Audio('URL');
-    audio.play();
-}
-          
-           // Lettre Maj Fin
-
-          // Vérifiez si la touche ... a été appuyée
-
-        };
-    </script>
 </body>
 </html>
